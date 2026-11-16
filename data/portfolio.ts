@@ -55,11 +55,37 @@ export const hero = {
     "My last production launch served 4,500+ users live through an entire cricket season, from a zero-install PWA. Every build ships with tests, CI, and written architecture decisions, so it keeps working after I hand it over.",
 } as const;
 
-export const bio = [
-  "I'm a full-stack and AI engineer in Pune (B.Tech, AI & Data Science) who builds every project as if it's going to production — because mine usually do.",
-  "I work async-first: decisions, test plans and honest limitations are written down in the repo, and you get short weekly updates you can read in two minutes.",
-  "I own the outcome end to end, from the first schema to the deploy pipeline to the handoff notes your next engineer will rely on.",
-] as const;
+/** About section, written from the November 2026 resume. */
+export const about = {
+  heading: "I build real products, and I get better at it every day.",
+  bio: [
+    "I'm a full-stack developer and a B.Tech student in Artificial Intelligence & Data Science at DY Patil College of Engineering, Pune. I build and ship real web apps and AI-powered products, not just coursework.",
+    "My live-scoring app for the LBPL cricket tournament reached 4,500+ users, 600+ installs and 19,000+ page views in one season. Since then I've shipped a real-time collaboration platform, a fraud-detection dashboard, an orbital-debris risk tracker and an open-source developer tool.",
+    "I take on freelance work in web development (React, Node.js) and AI-integrated applications. I like turning messy real-world problems into simple, working software, and I keep my fundamentals sharp with daily data structures and algorithms practice on LeetCode.",
+  ],
+  tags: ["Full-Stack Developer", "Pune, India · IST (UTC+5:30)", "Remote · clients worldwide"],
+  education: {
+    school: "DY Patil College of Engineering, Akurdi",
+    degree: "B.Tech, Artificial Intelligence & Data Science",
+    years: "2024 – 2028",
+    detail: "CGPA 8.7 after semester 4",
+  },
+  leadership: [
+    { role: "Management Co-lead", org: "Sambhav 3.0 TechFest", note: "Event and team coordination" },
+    { role: "Technical Coordinator", org: "Toastmasters DYPCOE" },
+    { role: "Coordinator", org: "Technical Championship" },
+  ],
+  interests: [
+    "District-level cricket",
+    "Badminton",
+    "Table tennis",
+    "Swimming",
+    "Chess",
+    "Portrait sketching",
+    "Sudoku & puzzles",
+    "Music",
+  ],
+} as const;
 
 export const principles: Principle[] = [
   {
