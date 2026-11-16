@@ -41,8 +41,11 @@ export function HeroBento({ stats }: { stats: GitHubStats }) {
 
   const tiles = [
     { value: String(stats.publicRepos), label: "public repos" },
-    { value: String(stats.activeRepos90d), label: "active in 90 days" },
-    { value: String(stats.liveDeployments), label: "live deployments" },
+    ...(stats.contributions
+      ? [{ value: stats.contributions.total.toLocaleString("en-US"), label: "contributions, last year" }]
+      : []),
+    { value: String(stats.activeRepos90d), label: "repos active, 90 days" },
+    { value: String(stats.liveSites), label: "repos with a live site" },
   ];
 
   return (
@@ -69,14 +72,15 @@ export function HeroBento({ stats }: { stats: GitHubStats }) {
             {stats.live ? `pushed ${lastPush}` : "snapshot"}
           </span>
         </div>
-        <div className="mt-4 grid grid-cols-3 gap-2">
+        <div className={`mt-4 grid gap-2 ${tiles.length === 4 ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-3"}`}>
           {tiles.map((t) => (
             <div key={t.label} className="rounded-xl border border-line bg-surface-2/60 px-3 py-2.5">
-              <div className="font-mono text-xl font-medium text-fg">{t.value}</div>
+              <div className="font-mono text-xl font-medium tabular-nums text-fg">{t.value}</div>
               <div className="mt-0.5 text-[0.7rem] leading-tight text-subtle">{t.label}</div>
             </div>
           ))}
         </div>
+        {stats.contributions && <ContributionStrip weeks={stats.contributions.weeks} />}
         <div className="mt-4">
           <div className="flex h-1.5 overflow-hidden rounded-full bg-surface-2">
             {stats.topLanguages.map((l, i) => (
@@ -98,6 +102,10 @@ export function HeroBento({ stats }: { stats: GitHubStats }) {
               </span>
             ))}
           </div>
+          <p className="mt-2 font-mono text-[0.6rem] text-subtle">
+            {stats.languageBasis === "bytes" ? "Languages by code size" : "Languages by repo count"}
+            {stats.live ? ` · refreshed hourly from GitHub` : " · snapshot, GitHub unreachable"}
+          </p>
         </div>
       </SpotlightCard>
 
@@ -179,5 +187,32 @@ export function HeroBento({ stats }: { stats: GitHubStats }) {
         </div>
       </SpotlightCard>
     </motion.div>
+  );
+}
+
+/** The last year of the GitHub contribution calendar, as a compact heatmap. */
+function ContributionStrip({ weeks }: { weeks: number[][] }) {
+  const recent = weeks.slice(-53);
+  const max = Math.max(1, ...recent.flat());
+  const level = (n: number) => (n === 0 ? 0 : Math.min(4, Math.ceil((n / max) * 4)));
+  const opacity = [0, 0.3, 0.5, 0.75, 1];
+  return (
+    <div className="mt-4" aria-label="Contribution activity, last year">
+      <div className="grid grid-flow-col grid-rows-7 gap-[2px]" style={{ gridTemplateColumns: `repeat(${recent.length}, minmax(0, 1fr))` }}>
+        {recent.flatMap((days, w) =>
+          Array.from({ length: 7 }, (_, d) => {
+            const n = days[d];
+            return (
+              <span
+                key={`${w}-${d}`}
+                title={n === undefined ? undefined : `${n} contribution${n === 1 ? "" : "s"}`}
+                className="aspect-square rounded-[2px] bg-surface-2"
+                style={n ? { background: `color-mix(in srgb, var(--accent) ${opacity[level(n)]! * 100}%, var(--surface-2))` } : undefined}
+              />
+            );
+          }),
+        )}
+      </div>
+    </div>
   );
 }

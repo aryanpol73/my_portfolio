@@ -27,7 +27,7 @@ the hero switcher and the large bento slots.
 | --- | --- |
 | `WEB3FORMS_ACCESS_KEY` | Delivers the inquiry form to your inbox via Web3Forms. Without it, the form opens the visitor's email app with the brief pre-filled, so no lead is lost. |
 | `NEXT_PUBLIC_SITE_URL` | Canonical URL for OpenGraph / Twitter metadata. |
-| `GITHUB_TOKEN` | Optional. Raises the GitHub API rate limit for the live stats card (refreshed hourly; falls back to a snapshot). |
+| `GITHUB_TOKEN` | Recommended. A read-only fine-grained token ("Public repositories" access). Unlocks the contribution count and heatmap and languages by code size, and avoids the 60-requests-per-hour anonymous limit that shared hosts like Vercel often hit. Stats refresh hourly; if GitHub fails during a refresh, the last good numbers stay up. |
 
 To use a real scheduler for "Book a 15-Min Discovery Call", set `profile.bookingUrl` in `data/portfolio.ts` to your
 Cal.com or Calendly link. While it's empty, the button opens a pre-written email.
