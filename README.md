@@ -16,7 +16,7 @@ Every word on the site lives in [`data/portfolio.ts`](data/portfolio.ts) (profil
 capabilities) and [`data/projects.ts`](data/projects.ts) (all 14 case studies). Components only render that data.
 
 Project screenshots are 1440×900 PNGs in `public/projects/`, captured from each project's home page with headless
-Chrome. Projects without a public deployment (QUORUM while its Vercel deploy is down, Veract, Continuum, Aerokym) were
+Chrome. Projects without a public deployment (Veract, Continuum, Aerokym) were
 captured from a local run with demo data, which each case study states. To add a project, append an entry to
 `data/projects.ts` and drop its screenshot in `public/projects/`. Set `featured: true` on up to four to put them in
 the hero switcher and the large bento slots.

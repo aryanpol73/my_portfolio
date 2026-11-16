@@ -145,7 +145,7 @@ export const services: Service[] = [
     ],
     idealFor: "SaaS teams adding AI to an existing product, and ops teams automating review or triage work.",
     timeline: "2–5 weeks",
-    proof: ["QUORUM", "Veract", "Vocalyze"],
+    proof: ["LBPL Cricket", "Veract", "Vocalyze"],
   },
   {
     id: "data-ml",
