@@ -51,6 +51,16 @@ export const profile = {
 
 export const hero = {
   headline: "Real-time web apps and AI systems, shipped to production — not just to a demo.",
+  /** Words of the headline drawn in the animated gradient. Must appear in `headline` exactly. */
+  highlight: "shipped to production",
+  /** The terminal line typed once per visit before the availability pill appears. */
+  bootLine: "whoami --status  →  available · IST (UTC+5:30)",
+  /** Hero stats. `source` is shown on the ✓ so every number can be traced. */
+  stats: [
+    { k: "4.5K+", v: "users served live", source: "LBPL Cricket README · Season 3" },
+    { k: "880+", v: "automated tests in 4 repos", source: "Strata 329 · CONFLUX 426 · P.O.W.E.R. 93 · Veract 38" },
+    { k: "IST", v: "overlaps EU & US AM", source: "Pune, India · UTC+5:30" },
+  ],
   subheadline:
     "My last production launch served 4,500+ users live through an entire cricket season, from a zero-install PWA. Every build ships with tests, CI, and written architecture decisions, so it keeps working after I hand it over.",
 } as const;

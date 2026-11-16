@@ -18,7 +18,7 @@ export const SpotlightCard = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivEl
     <div
       ref={ref}
       onPointerMove={handleMove}
-      className={`spotlight-card rounded-2xl border border-line bg-surface ${className}`}
+      className={`spotlight-card rounded-2xl border border-line bg-surface-glass md:backdrop-blur-xl ${className}`}
       {...rest}
     >
       {children}

@@ -19,6 +19,13 @@
   --invert-bg: #fafafa;
   --invert-fg: #09090b;
   --grid-dot: rgba(255, 255, 255, 0.05);
+  --accent-2: #22d3ee;
+  --accent-3: #a78bfa;
+  --accent-glow: rgba(16, 185, 129, 0.5);
+  --on-gradient: #03140e;
+  --surface-glass: rgba(17, 17, 19, 0.62);
+  --blob-opacity: 0.3;
+  --grain-opacity: 0.08;
   color-scheme: dark;
 }
 
@@ -38,6 +45,13 @@
   --invert-bg: #09090b;
   --invert-fg: #fafafa;
   --grid-dot: rgba(9, 9, 11, 0.06);
+  --accent-2: #0891b2;
+  --accent-3: #7c3aed;
+  --accent-glow: rgba(5, 150, 105, 0.4);
+  --on-gradient: #ffffff;
+  --surface-glass: rgba(255, 255, 255, 0.66);
+  --blob-opacity: 0.18;
+  --grain-opacity: 0.05;
   color-scheme: light;
 }
 
@@ -45,6 +59,8 @@
   --color-canvas: var(--canvas);
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
+  --color-surface-glass: var(--surface-glass);
+  --color-accent-2: var(--accent-2);
   --color-line: var(--line);
   --color-line-strong: var(--line-strong);
   --color-fg: var(--fg);
@@ -168,6 +184,188 @@
   animation: orbit-spin 18s linear infinite;
   transform-origin: center;
   transform-box: fill-box;
+}
+
+/* ---------- Aurora atmosphere ---------- */
+
+/* Fixed behind everything: three drifting blurred lights and a film grain. */
+.atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.atmosphere .blob {
+  position: absolute;
+  width: 58vmax;
+  height: 58vmax;
+  border-radius: 9999px;
+  filter: blur(90px);
+  opacity: var(--blob-opacity);
+  will-change: transform;
+}
+.atmosphere .b1 {
+  background: var(--accent);
+  top: -26vmax;
+  left: -16vmax;
+  animation: aurora-1 26s ease-in-out infinite alternate;
+}
+.atmosphere .b2 {
+  background: var(--accent-2);
+  top: -20vmax;
+  right: -22vmax;
+  animation: aurora-2 30s ease-in-out infinite alternate;
+}
+.atmosphere .b3 {
+  background: var(--accent-3);
+  bottom: -32vmax;
+  left: 18vw;
+  opacity: calc(var(--blob-opacity) * 0.7);
+  animation: aurora-3 34s ease-in-out infinite alternate;
+}
+.atmosphere .grain {
+  position: absolute;
+  inset: 0;
+  opacity: var(--grain-opacity);
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+@keyframes aurora-1 {
+  to {
+    transform: translate(22vw, 30vh) scale(1.15);
+  }
+}
+@keyframes aurora-2 {
+  to {
+    transform: translate(-26vw, 40vh) scale(0.9);
+  }
+}
+@keyframes aurora-3 {
+  to {
+    transform: translate(-18vw, -34vh) scale(1.2);
+  }
+}
+@media (max-width: 640px) {
+  .atmosphere .blob {
+    filter: blur(60px);
+  }
+}
+
+/* Animated gradient type for a highlighted phrase. */
+.grad-text {
+  background: linear-gradient(100deg, var(--accent), var(--accent-2) 40%, var(--accent-3) 70%, var(--accent));
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 7s linear infinite;
+}
+@keyframes shimmer {
+  to {
+    background-position: -250% 0;
+  }
+}
+
+/* Primary call to action. */
+.btn-glow {
+  background: linear-gradient(120deg, var(--accent), var(--accent-2));
+  color: var(--on-gradient);
+  box-shadow:
+    0 10px 34px -10px var(--accent-glow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+/* Light travelling around the border of interactive cards on hover. */
+@property --ring-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+.ring-glow::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  background: conic-gradient(from var(--ring-angle), transparent 0 64%, var(--accent) 78%, var(--accent-2) 88%, transparent 96%);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  animation: ring-spin 5s linear infinite;
+}
+.ring-glow:hover::after,
+.group:hover > .ring-glow::after {
+  opacity: 1;
+}
+@keyframes ring-spin {
+  to {
+    --ring-angle: 360deg;
+  }
+}
+
+/* Hero: soft light above the headline and dots that light up under the cursor. */
+.hero-glow {
+  background: radial-gradient(
+    ellipse at center,
+    color-mix(in srgb, var(--accent) 28%, transparent),
+    color-mix(in srgb, var(--accent-2) 10%, transparent) 40%,
+    transparent 68%
+  );
+}
+.dot-glow {
+  background-image: radial-gradient(var(--accent) 1.2px, transparent 1.4px);
+  background-size: 22px 22px;
+  -webkit-mask-image: radial-gradient(180px circle at var(--mx, -999px) var(--my, -999px), #000, transparent 70%);
+  mask-image: radial-gradient(180px circle at var(--mx, -999px) var(--my, -999px), #000, transparent 70%);
+}
+
+/* Tooltips are display:none until shown so they never widen the page; this fades them in. */
+.tip {
+  animation: tip-in 0.18s ease-out;
+}
+@keyframes tip-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+.caret {
+  display: inline-block;
+  width: 0.55em;
+  height: 1.05em;
+  margin-left: 2px;
+  vertical-align: -2px;
+  background: var(--fg);
+  animation: caret-blink 1s steps(1) infinite;
+}
+@keyframes caret-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Theme switch: the new theme grows as a circle from the toggle (see lib/theme.ts). */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .atmosphere .blob,
+  .grad-text,
+  .ring-glow::after {
+    animation: none !important;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

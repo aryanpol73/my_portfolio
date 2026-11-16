@@ -4,33 +4,25 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { spring } from "@/lib/motion";
-
-type Theme = "dark" | "light";
+import { THEME_EVENT, centerOf, getTheme, toggleTheme, type Theme } from "@/lib/theme";
 
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme | null>(null);
+  const [theme, setThemeState] = useState<Theme | null>(null);
 
   useEffect(() => {
-    setTheme(document.documentElement.dataset.theme === "light" ? "light" : "dark");
+    setThemeState(getTheme());
+    // The command palette can also switch the theme; stay in sync with it.
+    const onChange = (e: Event) => setThemeState((e as CustomEvent<Theme>).detail);
+    window.addEventListener(THEME_EVENT, onChange);
+    return () => window.removeEventListener(THEME_EVENT, onChange);
   }, []);
-
-  function toggle() {
-    const next: Theme = theme === "light" ? "dark" : "light";
-    document.documentElement.dataset.theme = next;
-    try {
-      localStorage.setItem("theme", next);
-    } catch {
-      // Storage unavailable (private mode): the toggle still works for this visit.
-    }
-    setTheme(next);
-  }
 
   const label = theme === "light" ? "Switch to dark mode" : "Switch to light mode";
 
   return (
     <button
       type="button"
-      onClick={toggle}
+      onClick={(e) => toggleTheme(centerOf(e.currentTarget))}
       aria-label={label}
       title={label}
       className="relative grid size-9 place-items-center overflow-hidden rounded-full border border-line text-muted transition-colors hover:bg-surface-2 hover:text-fg"

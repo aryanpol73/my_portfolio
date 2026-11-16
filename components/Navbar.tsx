@@ -1,17 +1,23 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
-import { ArrowUpRight, Menu, X } from "lucide-react";
+import { AnimatePresence, motion, useScroll, useSpring } from "framer-motion";
+import { ArrowUpRight, Menu, Search, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { navLinks, profile } from "@/data/portfolio";
 import { spring } from "@/lib/motion";
 import { scrollToSection } from "@/lib/scroll";
+import { openCommandPalette } from "./CommandPalette";
 import { ThemeToggle } from "./ThemeToggle";
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState("");
+  const [isMac, setIsMac] = useState(false);
+  const { scrollYProgress } = useScroll();
+  const progress = useSpring(scrollYProgress, { stiffness: 200, damping: 32, restDelta: 0.001 });
+
+  useEffect(() => setIsMac(/Mac|iPhone|iPad/.test(navigator.userAgent)), []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -51,6 +57,11 @@ export function Navbar() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-4 sm:pt-4">
+      <motion.div
+        aria-hidden
+        style={{ scaleX: progress }}
+        className="absolute inset-x-0 top-0 h-[2px] origin-left bg-[linear-gradient(90deg,var(--accent),var(--accent-2),var(--accent-3))] shadow-[0_0_10px_var(--accent-glow)]"
+      />
       <nav
         aria-label="Primary"
         className={`mx-auto flex h-14 max-w-6xl items-center justify-between rounded-2xl border pl-3 pr-2 backdrop-blur-xl backdrop-saturate-150 transition-[background-color,border-color,box-shadow] duration-300 ${
@@ -104,6 +115,16 @@ export function Navbar() {
         </ul>
 
         <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={openCommandPalette}
+            aria-label="Open command palette"
+            title="Search and jump anywhere"
+            className="flex h-9 items-center gap-2 rounded-full border border-line px-2.5 text-muted transition-colors hover:bg-surface-2 hover:text-fg"
+          >
+            <Search className="size-4" aria-hidden />
+            <kbd className="hidden rounded border border-line-strong px-1 font-mono text-[0.62rem] lg:inline">{isMac ? "⌘K" : "Ctrl K"}</kbd>
+          </button>
           <ThemeToggle />
           <a
             href="#contact"

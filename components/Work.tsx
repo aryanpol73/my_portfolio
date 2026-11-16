@@ -1,13 +1,14 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { projectGroups, projects, type Project, type ProjectGroup } from "@/data/portfolio";
+import { projectsUsing } from "@/lib/capabilities";
 import { spring } from "@/lib/motion";
 import { CaseStudyDrawer } from "./CaseStudyDrawer";
 import { ProjectShot } from "./ProjectShot";
-import { useCaseStudy } from "./Providers";
+import { useCaseStudy, useTechFilter } from "./Providers";
 import { SectionHeader } from "./Reveal";
 import { SpotlightCard } from "./SpotlightCard";
 
@@ -39,7 +40,10 @@ function desktopSpans(list: Project[], featureFirst: boolean): number[] {
 
 export function Work() {
   const { openCaseStudy } = useCaseStudy();
-  const [filter, setFilter] = useState<Filter>("all");
+  const { tech, setTech } = useTechFilter();
+  const [groupFilter, setFilter] = useState<Filter>("all");
+  // A skill picked in the capability matrix overrides the category tabs.
+  const filter: Filter = tech ? "all" : groupFilter;
 
   const counts = useMemo(() => {
     const c: Record<string, number> = { all: projects.length };
@@ -47,8 +51,14 @@ export function Work() {
     return c;
   }, []);
 
-  const visible = filter === "all" ? projects : projects.filter((p) => p.group === filter);
-  const spans = useMemo(() => desktopSpans(visible, filter === "all"), [visible, filter]);
+  const visible = useMemo(() => {
+    if (tech) {
+      const slugs = new Set(projectsUsing(tech).map((p) => p.slug));
+      return projects.filter((p) => slugs.has(p.slug));
+    }
+    return filter === "all" ? projects : projects.filter((p) => p.group === filter);
+  }, [tech, filter]);
+  const spans = useMemo(() => desktopSpans(visible, filter === "all" && !tech), [visible, filter, tech]);
 
   return (
     <section id="work" className="border-t border-line py-24 md:py-32">
@@ -59,20 +69,24 @@ export function Work() {
           lede="Every one started from a real problem, not a tutorial. Open any project for the problem, the architecture decisions behind it, and what it measurably delivered."
         />
 
+        <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div
           role="tablist"
           aria-label="Filter projects by category"
-          className="-mx-4 mb-8 flex gap-1 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0"
+          className="-mx-4 flex gap-1 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0"
         >
           {projectGroups.map((g) => {
-            const active = filter === g.id;
+            const active = filter === g.id && !tech;
             return (
               <button
                 key={g.id}
                 type="button"
                 role="tab"
                 aria-selected={active}
-                onClick={() => setFilter(g.id)}
+                onClick={() => {
+                  setTech(null);
+                  setFilter(g.id);
+                }}
                 className={`relative shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors ${
                   active ? "text-invert-fg" : "text-muted hover:text-fg"
                 }`}
@@ -87,6 +101,50 @@ export function Work() {
               </button>
             );
           })}
+        </div>
+
+        <div className="flex shrink-0 items-center gap-2 font-mono text-xs text-subtle" aria-live="polite">
+          <AnimatePresence initial={false}>
+            {tech && (
+              <motion.span
+                key="tech"
+                initial={{ opacity: 0, scale: 0.85 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.85 }}
+                transition={spring}
+                className="inline-flex items-center gap-1 rounded-full border border-accent/50 bg-accent-soft py-1 pl-2.5 pr-1 text-accent"
+              >
+                uses {tech}
+                <button
+                  type="button"
+                  onClick={() => setTech(null)}
+                  aria-label={`Clear filter: ${tech}`}
+                  className="grid size-5 place-items-center rounded-full hover:bg-accent/15"
+                >
+                  <X className="size-3" aria-hidden />
+                </button>
+              </motion.span>
+            )}
+          </AnimatePresence>
+          <span className="flex items-center gap-1">
+            showing
+            <span className="relative inline-flex h-[1.2em] overflow-hidden tabular-nums text-fg">
+              <AnimatePresence mode="popLayout" initial={false}>
+                <motion.span
+                  key={visible.length}
+                  initial={{ y: "100%" }}
+                  animate={{ y: 0 }}
+                  exit={{ y: "-100%" }}
+                  transition={spring}
+                  className="block"
+                >
+                  {visible.length}
+                </motion.span>
+              </AnimatePresence>
+            </span>
+            / {projects.length}
+          </span>
+        </div>
         </div>
 
         <motion.ul layout className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -131,7 +189,7 @@ function ProjectCard({
 }) {
   return (
     <motion.div whileHover={{ y: -4 }} transition={spring} className="h-full">
-      <SpotlightCard className="group h-full transition-colors hover:border-line-strong">
+      <SpotlightCard className="ring-glow group h-full transition-colors hover:border-line-strong">
         <button
           type="button"
           onClick={onOpen}

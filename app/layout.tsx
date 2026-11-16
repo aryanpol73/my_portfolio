@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google";
+import { Atmosphere } from "@/components/Atmosphere";
+import { CommandPalette } from "@/components/CommandPalette";
 import { Providers } from "@/components/Providers";
 import { hero, profile } from "@/data/portfolio";
 import "./globals.css";
@@ -81,7 +83,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         >
           Skip to content
         </a>
-        <Providers>{children}</Providers>
+        <Atmosphere />
+        <Providers>
+          {children}
+          <CommandPalette />
+        </Providers>
       </body>
     </html>
   );

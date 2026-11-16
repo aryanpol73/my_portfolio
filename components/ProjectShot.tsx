@@ -32,7 +32,7 @@ export function ProjectShot({ project, className = "", sizes = "(min-width: 1024
           fill
           sizes={sizes}
           priority={priority}
-          className={`object-cover object-top ${hoverZoom ? "transition-transform duration-700 ease-out group-hover:scale-[1.03]" : ""}`}
+          className={`object-cover object-top ${hoverZoom ? "transition-transform duration-[2400ms] ease-out group-hover:-translate-y-[2%] group-hover:scale-[1.07]" : ""}`}
         />
       </div>
     </div>

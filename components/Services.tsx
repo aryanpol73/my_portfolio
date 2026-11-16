@@ -44,7 +44,7 @@ export function Services() {
             return (
               <motion.li key={s.id} variants={fadeUp} className="min-w-0">
                 <motion.div whileHover={{ y: -4 }} transition={spring} className="h-full">
-                  <SpotlightCard className="flex h-full flex-col p-6 transition-colors hover:border-line-strong">
+                  <SpotlightCard className="ring-glow flex h-full flex-col p-6 transition-colors hover:border-line-strong">
                     <div className="flex items-start justify-between">
                       <span className="grid size-11 place-items-center rounded-xl border border-line bg-surface-2 text-fg">
                         <Icon className="size-5" aria-hidden />

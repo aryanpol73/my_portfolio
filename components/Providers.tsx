@@ -23,6 +23,20 @@ interface CaseStudyState {
   closeCaseStudy: () => void;
 }
 
+interface TechFilterState {
+  /** A capability name from data/portfolio.ts; Work shows only the projects that use it. */
+  tech: string | null;
+  setTech: (tech: string | null) => void;
+}
+
+const TechFilterContext = createContext<TechFilterState | null>(null);
+
+export function useTechFilter(): TechFilterState {
+  const ctx = useContext(TechFilterContext);
+  if (!ctx) throw new Error("useTechFilter must be used inside <Providers>");
+  return ctx;
+}
+
 const InquiryContext = createContext<InquiryState | null>(null);
 const ToastContext = createContext<ToastState | null>(null);
 const CaseStudyContext = createContext<CaseStudyState | null>(null);
@@ -73,11 +87,16 @@ export function Providers({ children }: { children: React.ReactNode }) {
     [activeSlug, openCaseStudy, closeCaseStudy],
   );
 
+  const [tech, setTech] = useState<string | null>(null);
+  const techFilter = useMemo(() => ({ tech, setTech }), [tech]);
+
   return (
     <MotionConfig reducedMotion="user">
       <InquiryContext.Provider value={inquiry}>
         <ToastContext.Provider value={toastValue}>
-          <CaseStudyContext.Provider value={caseStudy}>{children}</CaseStudyContext.Provider>
+          <CaseStudyContext.Provider value={caseStudy}>
+            <TechFilterContext.Provider value={techFilter}>{children}</TechFilterContext.Provider>
+          </CaseStudyContext.Provider>
           <div aria-live="polite" className="pointer-events-none fixed inset-x-0 bottom-6 z-[90] flex justify-center px-4">
             <AnimatePresence>
               {toast && (
