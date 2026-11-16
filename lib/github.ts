@@ -11,7 +11,7 @@ export interface GitHubStats {
   topLanguages: { name: string; share: number }[];
   /** "bytes" matches GitHub's own language bar; "repos" counts each repo's main language once. */
   languageBasis: "bytes" | "repos";
-  /** Contribution calendar for the last year. Only available with a token (GitHub hides it from anonymous requests). */
+  /** Contribution calendar for the last year (API with a token, else the public profile calendar). Null if unavailable. */
   contributions: { total: number; weeks: number[][] } | null;
   /** When these numbers were fetched (ISO). */
   fetchedAt: string;
@@ -137,13 +137,52 @@ async function viaGraphQL(token: string): Promise<GitHubStats> {
     ),
     topLanguages: topShares(bytes),
     languageBasis: "bytes",
-    contributions: {
-      total: cal.totalContributions,
-      weeks: cal.weeks.map((w) => w.contributionDays.map((d) => d.contributionCount)),
-    },
+    contributions:
+      cal.totalContributions > 0
+        ? {
+            total: cal.totalContributions,
+            weeks: cal.weeks.map((w) => w.contributionDays.map((d) => d.contributionCount)),
+          }
+        : await publicCalendar(),
     fetchedAt: new Date().toISOString(),
     live: true,
   };
+}
+
+/* ---------- Public contribution calendar (the graph on the profile page) ---------- */
+
+/**
+ * Reads the public calendar at github.com/users/<login>/contributions. Used when the API has no
+ * contribution data. Returns null rather than a misleading zero.
+ */
+async function publicCalendar(): Promise<GitHubStats["contributions"]> {
+  try {
+    const res = await fetch(`https://github.com/users/${profile.githubUser}/contributions`, {
+      headers: { Accept: "text/html" },
+      next: { revalidate: GITHUB_REVALIDATE },
+    });
+    if (!res.ok) return null;
+    const html = await res.text();
+
+    const heading = /id="js-contribution-activity-description"[^>]*>\s*([\d,]+)\s+contribution/.exec(html);
+    const total = heading?.[1] ? Number(heading[1].replace(/,/g, "")) : 0;
+    if (!total) return null;
+
+    // Cells are id="contribution-day-component-<weekday>-<week>"; tooltips carry the counts.
+    const counts = new Map<string, number>();
+    for (const m of html.matchAll(/for="(contribution-day-component-\d+-\d+)"[^>]*>\s*(\d+|No) contribution/g)) {
+      counts.set(m[1]!, m[2] === "No" ? 0 : Number(m[2]));
+    }
+    const weeks: number[][] = [];
+    for (const m of html.matchAll(/id="contribution-day-component-(\d+)-(\d+)"/g)) {
+      const day = Number(m[1]);
+      const week = Number(m[2]);
+      (weeks[week] ??= [])[day] = counts.get(`contribution-day-component-${day}-${week}`) ?? 0;
+    }
+    return { total, weeks: weeks.filter(Boolean) };
+  } catch {
+    return null;
+  }
 }
 
 /* ---------- Without a token: two public REST requests ---------- */
@@ -177,7 +216,7 @@ async function viaREST(): Promise<GitHubStats> {
     ),
     topLanguages: topShares(counts),
     languageBasis: "repos",
-    contributions: null,
+    contributions: await publicCalendar(),
     fetchedAt: new Date().toISOString(),
     live: true,
   };
