@@ -3,6 +3,7 @@ import { JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import { Atmosphere } from "@/components/Atmosphere";
 import { CommandPalette } from "@/components/CommandPalette";
 import { Providers } from "@/components/Providers";
+import { ServiceWorker } from "@/components/ServiceWorker";
 import { hero, profile } from "@/data/portfolio";
 import "./globals.css";
 
@@ -56,6 +57,15 @@ export const metadata: Metadata = {
     description: hero.headline,
   },
   robots: { index: true, follow: true },
+  appleWebApp: { capable: true, title: profile.name, statusBarStyle: "black-translucent" },
+  formatDetection: { telephone: false },
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/icons/favicon-48.png", sizes: "48x48", type: "image/png" },
+    ],
+    apple: "/apple-icon.png",
+  },
 };
 
 export const viewport: Viewport = {
@@ -65,6 +75,7 @@ export const viewport: Viewport = {
   ],
   width: "device-width",
   initialScale: 1,
+  viewportFit: "cover",
 };
 
 /** Runs before paint so the stored theme applies with no flash. Dark is the default. */
@@ -84,6 +95,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           Skip to content
         </a>
         <Atmosphere />
+        <ServiceWorker />
         <Providers>
           {children}
           <CommandPalette />

@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { ImageResponse } from "next/og";
 import { hero, profile, projects } from "@/data/portfolio";
 
@@ -5,7 +7,8 @@ export const alt = `${profile.name} — ${profile.role}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-export default function OpenGraphImage() {
+export default async function OpenGraphImage() {
+  const logo = `data:image/png;base64,${(await readFile(join(process.cwd(), "public/icons/icon-192.png"))).toString("base64")}`;
   return new ImageResponse(
     (
       <div
@@ -16,7 +19,9 @@ export default function OpenGraphImage() {
           flexDirection: "column",
           justifyContent: "space-between",
           padding: 72,
-          background: "#09090B",
+          backgroundColor: "#09090B",
+          backgroundImage:
+            "radial-gradient(circle at 8% 0%, rgba(16,185,129,0.28), transparent 45%), radial-gradient(circle at 92% 100%, rgba(167,139,250,0.28), transparent 50%)",
           color: "#FAFAFA",
           fontFamily: "sans-serif",
         }}
@@ -29,9 +34,13 @@ export default function OpenGraphImage() {
           {hero.headline}
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", fontSize: 24 }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-            <div style={{ fontWeight: 700, fontSize: 30 }}>{profile.name}</div>
-            <div style={{ color: "#A1A1AA" }}>{profile.role}</div>
+          <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={logo} width={84} height={84} alt="" />
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              <div style={{ fontWeight: 700, fontSize: 30 }}>{profile.name}</div>
+              <div style={{ color: "#A1A1AA" }}>{profile.role}</div>
+            </div>
           </div>
           <div style={{ display: "flex", gap: 12, color: "#A1A1AA" }}>
             {projects.filter((p) => p.featured).map((p) => (

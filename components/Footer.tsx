@@ -1,3 +1,4 @@
+import { LogoMark } from "./LogoMark";
 import { profile } from "@/data/portfolio";
 import { GitHubIcon, LinkedInIcon } from "./BrandIcons";
 
@@ -6,9 +7,7 @@ export function Footer() {
     <footer className="border-t border-line">
       <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-6 px-4 py-10 sm:flex-row sm:items-center sm:px-6">
         <div className="flex items-center gap-3">
-          <span className="grid size-8 place-items-center rounded-lg bg-invert-bg font-mono text-[0.7rem] font-medium text-invert-fg">
-            {profile.initials}
-          </span>
+          <LogoMark className="size-8 shrink-0 drop-shadow-[0_4px_14px_rgba(16,185,129,0.35)] transition-transform duration-300 group-hover:rotate-[-6deg] group-hover:scale-105" />
           <div>
             <p className="text-sm font-semibold text-fg">{profile.name}</p>
             <p className="font-mono text-[0.7rem] text-subtle">

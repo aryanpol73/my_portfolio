@@ -51,3 +51,15 @@ lib/                    github stats, motion presets, inquiry validation, scroll
 ## Deploy
 
 Push to GitHub and import in Vercel. Add the env vars above in the project settings.
+
+## Brand & PWA
+
+The **AP orbit mark** is an A–P ligature (the A's right leg is the P's stem) in the site's aurora gradient, crossed by
+an orbit whose satellite echoes the pulsing "available" dot. Sources live in `public/brand/` (`logo.svg`,
+`logo-maskable.svg`); `app/icon.svg` is a heavier-stroke version for favicon sizes, and `components/LogoMark.tsx` is the
+inline navbar/footer mark.
+
+The site installs as an app: `app/manifest.ts` (icons, maskable icons, shortcuts) plus `public/sw.js`, which serves
+pages network-first with an offline fallback and caches static assets. Bump `VERSION` in `sw.js` to reset caches.
+To regenerate PNG icons, render the SVGs in `public/brand/` at 192/512 (and the maskable one at 180 for
+`app/apple-icon.png`).

@@ -1,5 +1,6 @@
 "use client";
 
+import { LogoMark } from "./LogoMark";
 import { AnimatePresence, motion, useScroll, useSpring } from "framer-motion";
 import { ArrowUpRight, Menu, Search, X } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -74,11 +75,9 @@ export function Navbar() {
             e.preventDefault();
             go("top");
           }}
-          className="flex items-center gap-2.5 rounded-lg"
+          className="group flex items-center gap-2.5 rounded-lg"
         >
-          <span className="grid size-8 place-items-center rounded-lg bg-invert-bg font-mono text-[0.7rem] font-medium text-invert-fg">
-            {profile.initials}
-          </span>
+          <LogoMark className="size-8 shrink-0 drop-shadow-[0_4px_14px_rgba(16,185,129,0.35)] transition-transform duration-300 group-hover:rotate-[-6deg] group-hover:scale-105" />
           <span className="text-sm font-semibold tracking-tight text-fg">{profile.name}</span>
         </a>
 
