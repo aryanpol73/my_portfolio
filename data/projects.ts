@@ -243,7 +243,7 @@ export const projects: Project[] = [
     stack: ["Python", "FastAPI", "pandas", "XGBoost", "WebSockets", "TypeScript", "Vite", "Render", "Vercel"],
     sourceUrl: "https://github.com/aryanpol73/conflux",
     liveUrl: "https://conflux-drab.vercel.app",
-    image: "/projects/conflux.png",
+    image: "/projects/conflux-graph.png",
     imageUrlLabel: "conflux-drab.vercel.app",
   },
   {
