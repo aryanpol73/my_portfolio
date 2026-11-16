@@ -8,7 +8,7 @@ import { spring } from "@/lib/motion";
 import { scrollToSection } from "@/lib/scroll";
 import { GitHubIcon } from "./BrandIcons";
 import { useCaseStudy } from "./Providers";
-import { ProjectVisual } from "./ProjectVisual";
+import { ProjectShot } from "./ProjectShot";
 
 export function CaseStudyDrawer() {
   const { activeSlug, openCaseStudy, closeCaseStudy } = useCaseStudy();
@@ -168,20 +168,21 @@ export function CaseStudyDrawer() {
                       className="inline-flex items-center gap-2 rounded-full bg-invert-bg px-4 py-2.5 text-sm font-semibold text-invert-fg transition-transform hover:scale-[1.02]"
                     >
                       <ExternalLink className="size-4" aria-hidden />
-                      Live Demo
+                      {project.liveLabel ?? "Live Demo"}
                     </a>
                   ) : (
                     <span className="inline-flex cursor-not-allowed items-center gap-2 rounded-full border border-dashed border-line-strong px-4 py-2.5 text-sm text-subtle">
                       <Lock className="size-4" aria-hidden />
-                      Demo on request
+                      Not deployed yet
                     </span>
                   )}
                 </div>
                 {project.liveNote && <p className="mt-2 text-xs text-subtle">{project.liveNote}</p>}
 
-                <motion.div layoutId={`visual-${project.slug}`} transition={spring} className="mt-8">
-                  <ProjectVisual kind={project.visual} className="h-56 sm:h-64" />
+                <motion.div layoutId={`shot-${project.slug}`} transition={spring} className="mt-8">
+                  <ProjectShot project={project} sizes="(min-width: 672px) 640px, 100vw" />
                 </motion.div>
+                {project.imageNote && <p className="mt-2 font-mono text-[0.68rem] text-subtle">{project.imageNote}</p>}
 
                 <dl className="mt-6 grid grid-cols-3 gap-3">
                   {project.metrics.map((m) => (

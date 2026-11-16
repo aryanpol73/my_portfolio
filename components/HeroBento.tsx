@@ -3,13 +3,15 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUpRight, Boxes, Brain, Database, Globe2, Rocket } from "lucide-react";
 import { useEffect, useState } from "react";
-import { profile, projects } from "@/data/portfolio";
+import { profile, projects as allProjects } from "@/data/portfolio";
 import type { GitHubStats } from "@/lib/github";
 import { spring } from "@/lib/motion";
 import { GitHubIcon } from "./BrandIcons";
 import { useCaseStudy } from "./Providers";
-import { ProjectVisual } from "./ProjectVisual";
+import { ProjectShot } from "./ProjectShot";
 import { SpotlightCard } from "./SpotlightCard";
+
+const projects = allProjects.filter((p) => p.featured);
 
 const domains = [
   { icon: Globe2, label: "Real-time web & PWAs" },
@@ -134,7 +136,7 @@ export function HeroBento({ stats }: { stats: GitHubStats }) {
             transition={{ duration: 0.22 }}
             className="mt-3"
           >
-            <ProjectVisual kind={project.visual} className="h-36 sm:h-40" />
+            <ProjectShot project={project} priority sizes="(min-width: 1024px) 520px, 100vw" />
             <div className="mt-3 flex items-end justify-between gap-3">
               <div className="min-w-0">
                 <p className="font-mono text-[0.65rem] uppercase tracking-wider text-subtle">{project.category}</p>
@@ -172,8 +174,8 @@ export function HeroBento({ stats }: { stats: GitHubStats }) {
           <Rocket className="size-3.5" aria-hidden /> Velocity
         </p>
         <div>
-          <p className="font-mono text-2xl font-medium text-fg">4</p>
-          <p className="text-xs leading-snug text-muted">flagship systems shipped in 2026, all public and documented</p>
+          <p className="font-mono text-2xl font-medium text-fg">{allProjects.length}</p>
+          <p className="text-xs leading-snug text-muted">systems shipped in 2026, all public and documented</p>
         </div>
       </SpotlightCard>
     </motion.div>

@@ -34,7 +34,7 @@ export default function OpenGraphImage() {
             <div style={{ color: "#A1A1AA" }}>{profile.role}</div>
           </div>
           <div style={{ display: "flex", gap: 12, color: "#A1A1AA" }}>
-            {projects.map((p) => (
+            {projects.filter((p) => p.featured).map((p) => (
               <div key={p.slug} style={{ border: "1px solid #27272A", borderRadius: 10, padding: "8px 14px" }}>
                 {p.name}
               </div>

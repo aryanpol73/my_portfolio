@@ -63,7 +63,7 @@ export function Hero({ stats }: { stats: GitHubStats }) {
           <motion.dl variants={fadeUp} className="mt-12 grid max-w-md grid-cols-3 gap-6 border-t border-line pt-6">
             {[
               { k: "4.5K+", v: "users served live" },
-              { k: "750+", v: "automated tests in 2 repos" },
+              { k: "880+", v: "automated tests in 4 repos" },
               { k: "IST", v: "overlaps EU & US AM" },
             ].map((s) => (
               <div key={s.v}>
